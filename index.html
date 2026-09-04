@@ -21,14 +21,15 @@
     --glass-border: rgba(255,255,255,0.65);
     --glass-highlight: rgba(255,255,255,0.65);
     --ink:#2E2A3D;
-    --ink-soft:#7C7390;
+    --ink-soft:#504A5D;
     --shadow-glass: 0 10px 26px -12px rgba(60,40,90,0.32);
     --shadow-card: 0 24px 44px -18px rgba(60,40,90,0.4);
     --vn1:#FF9A62; --vn2:#FF7A9A; --vn-glow: rgba(255,138,90,0.4);
     --kr1:#9C7FC9; --kr2:#D9A6C2; --kr-glow: rgba(156,127,201,0.38);
     --jp1:#FF9FC1; --jp2:#8FB8EA; --jp-glow: rgba(143,184,234,0.42);
     --gold:#C9A15A;
-    --warn:#B4552E;
+    --gold-text:#6E5831;
+    --warn:#75371D;
     --font-display: ui-rounded, "SF Pro Rounded", -apple-system, "Segoe UI", sans-serif;
     --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
@@ -49,6 +50,7 @@
     --kr1:#A98CDB; --kr2:#E0AFC9; --kr-glow: rgba(169,140,219,0.3);
     --jp1:#FFA9CB; --jp2:#9BC3EE; --jp-glow: rgba(155,195,238,0.3);
     --gold:#D9B76E;
+    --gold-text:#D9B76E;
     --warn:#FFB27A;
   }
   @media (prefers-color-scheme: dark){
@@ -66,6 +68,7 @@
       --kr1:#A98CDB; --kr2:#E0AFC9; --kr-glow: rgba(169,140,219,0.3);
       --jp1:#FFA9CB; --jp2:#9BC3EE; --jp-glow: rgba(155,195,238,0.3);
       --gold:#D9B76E;
+      --gold-text:#D9B76E;
       --warn:#FFB27A;
     }
   }
@@ -144,6 +147,15 @@
     pointer-events:none;
   }
 
+  /* native <button> reset for elements styled as cards/chips, plus consistent
+     keyboard-focus ring and touch tuning across every interactive element */
+  .day-chip, .dest-card, .sr-item{ appearance:none; -webkit-appearance:none; font:inherit; cursor:pointer; }
+  .tab:focus-visible, .day-chip:focus-visible, .dest-card:focus-visible, .sr-item:focus-visible,
+  .shop-item:focus-visible, .shop-map:focus-visible, .event-links a:focus-visible, .search input:focus-visible{
+    outline:2px solid var(--ink); outline-offset:2px;
+  }
+  .day-chip, .dest-card, .sr-item, .shop-item, .shop-map, .event-links a, .search input{ touch-action:manipulation; }
+
   @keyframes riseIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
   .stagger{ animation:riseIn .55s var(--ease-out) both; }
 
@@ -152,9 +164,9 @@
   .tabbar{ display:flex; justify-content:space-around; align-items:center; padding:8px; border-radius:26px; }
   .tab{
     display:flex; flex-direction:row; align-items:center; gap:6px;
-    background:none; border:none; cursor:pointer;
+    background:none; border:none; cursor:pointer; touch-action:manipulation;
     color:var(--ink-soft); font-family:var(--font-ui); font-size:12px; font-weight:700;
-    padding:10px 14px; border-radius:18px; flex:1; justify-content:center;
+    padding:10px 14px; min-height:44px; border-radius:18px; flex:1; justify-content:center;
     transition:color .2s ease, background .25s var(--ease-spring), transform .15s var(--ease-spring);
   }
   .tab svg{ width:19px; height:19px; }
@@ -195,9 +207,9 @@
   .dest-scroll{ display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -20px; padding:2px 20px 8px; scroll-padding-left:20px; scrollbar-width:none; }
   .dest-scroll::-webkit-scrollbar{ display:none; }
   .dest-card{
-    position:relative; flex:0 0 80%; scroll-snap-align:center; height:225px;
-    border-radius:26px; overflow:hidden; cursor:pointer;
-    box-shadow:var(--shadow-card), 0 24px 40px -22px var(--glow, transparent);
+    display:block; position:relative; flex:0 0 80%; scroll-snap-align:center; height:225px;
+    border-radius:26px; overflow:hidden; cursor:pointer; padding:0; margin:0; text-align:left;
+    background:none; box-shadow:var(--shadow-card), 0 24px 40px -22px var(--glow, transparent);
     border:1px solid rgba(255,255,255,0.5);
     transition:transform .2s var(--ease-spring);
     animation:riseIn .6s var(--ease-out) both;
@@ -243,7 +255,11 @@
   .day-chip .dot{ width:6px; height:6px; border-radius:50%; }
   .day-chip.selected{ background:var(--ink); box-shadow:0 6px 16px -6px rgba(60,40,90,0.4); }
   .day-chip.selected .wd, .day-chip.selected .dn{ color:var(--bg2); }
-  .day-chip.is-today:not(.selected){ box-shadow:inset 0 0 0 1.5px var(--gold); }
+  .day-chip.is-today:not(.selected){ border:1.5px dashed var(--gold); }
+
+  .leg-legend{ display:flex; gap:14px; padding:10px 2px 0; }
+  .leg-legend span{ display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:var(--ink-soft); }
+  .leg-legend i{ width:7px; height:7px; border-radius:50%; display:block; }
 
   .day-head{ display:flex; align-items:baseline; justify-content:space-between; margin:10px 2px 14px; }
   .day-head h2{ font-family:var(--font-display); font-size:19px; font-weight:800; }
@@ -256,7 +272,7 @@
   .ticket-perf::before, .ticket-perf::after{ content:""; position:absolute; top:-9px; width:18px; height:18px; border-radius:50%; background:var(--bg2); }
   .ticket-perf::before{ left:-9px; } .ticket-perf::after{ right:-9px; }
   .flight-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .flight-code{ font-family:var(--font-mono); font-size:11px; font-weight:800; color:var(--gold); letter-spacing:0.03em; }
+  .flight-code{ font-family:var(--font-mono); font-size:11px; font-weight:800; color:var(--gold-text); letter-spacing:0.03em; }
   .flight-route{ display:flex; align-items:center; gap:10px; margin-top:8px; }
   .flight-pt{ font-family:var(--font-mono); font-size:23px; font-weight:800; letter-spacing:-0.01em; }
   .flight-plane{ flex:1; height:1px; background:rgba(120,110,150,0.35); position:relative; }
@@ -272,7 +288,7 @@
   .event-body{ flex:1; min-width:0; }
   .event-title{ font-size:14px; font-weight:800; }
   .event-place{ font-size:12px; color:var(--ink-soft); margin-top:3px; line-height:1.4; font-weight:600; }
-  .event-note{ font-size:11px; color:var(--gold); margin-top:6px; font-weight:700; }
+  .event-note{ font-size:11px; color:var(--gold-text); margin-top:6px; font-weight:700; }
   .event-packages{ margin-top:9px; display:flex; flex-direction:column; gap:4px; }
   .pkg-row{ display:flex; gap:8px; font-size:11.5px; font-weight:700; }
   .pkg-time{ font-family:var(--font-mono); color:var(--ink-soft); width:40px; flex-shrink:0; }
@@ -299,7 +315,7 @@
   .shop-item{ display:flex; align-items:center; gap:12px; padding:11px 13px; border-radius:16px; margin-bottom:7px; cursor:pointer; transition:transform .15s var(--ease-spring); }
   .shop-item:active{ transform:scale(0.98); }
   .shop-check{ position:relative; width:24px; height:24px; border-radius:50%; border:1.5px solid rgba(120,110,150,0.4); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .2s var(--ease-spring), border-color .15s ease, transform .3s var(--ease-spring); background:var(--glass-strong); overflow:visible; }
-  .shop-check svg{ width:12px; height:12px; color:#fff; opacity:0; transition:opacity .1s ease; }
+  .shop-check svg{ width:12px; height:12px; color:#3A1A12; opacity:0; transition:opacity .1s ease; }
   .shop-item.done .shop-check{ background:linear-gradient(135deg, var(--vn1), var(--vn2)); border-color:transparent; }
   .shop-item.done .shop-check svg{ opacity:1; }
   .shop-check.pop{ animation:checkPop .4s var(--ease-spring); }
@@ -308,9 +324,17 @@
   @keyframes sparkOut{ from{ transform:translate(-50%,-50%) rotate(var(--ang)) translateX(0); opacity:1; } to{ transform:translate(-50%,-50%) rotate(var(--ang)) translateX(var(--dist)); opacity:0; } }
   .shop-name{ flex:1; font-size:13.5px; font-weight:700; transition:opacity .15s ease; }
   .shop-item.done .shop-name{ opacity:0.45; text-decoration:line-through; }
-  .shop-map{ flex-shrink:0; color:var(--ink-soft); display:flex; transition:transform .15s var(--ease-spring); }
+  .shop-map{ flex-shrink:0; width:44px; height:44px; color:var(--ink-soft); display:flex; align-items:center; justify-content:center; transition:transform .15s var(--ease-spring); }
   .shop-map:active{ transform:scale(0.85); }
   .shop-map svg{ width:15px; height:15px; }
+
+  @media (max-height:480px){
+    .app-top{ padding-top:14px; }
+    .hero{ padding-top:2px; }
+    .hero h1{ font-size:23px; }
+    .hero .sub{ margin-top:3px; }
+    .dest-card{ height:170px; }
+  }
 
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
@@ -335,7 +359,7 @@
 
         <div class="search glass">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input id="searchInput" type="text" placeholder="Search flights, plans, shops…" autocomplete="off">
+          <input id="searchInput" type="text" placeholder="Search flights, plans, shops…" aria-label="Search flights, plans, and shops" autocomplete="off">
         </div>
         <div class="search-results" id="searchResults"></div>
 
@@ -346,7 +370,7 @@
 
         <div class="section-label">The Route</div>
         <div class="dest-scroll" id="destScroll">
-          <div class="dest-card" data-jump="2026-09-10" style="--glow:var(--vn-glow)">
+          <button type="button" class="dest-card" data-jump="2026-09-10" aria-label="Jump to Ho Chi Minh City itinerary" style="--glow:var(--vn-glow)">
             <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
               <defs><linearGradient id="sgSky" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#FFD9A0"/><stop offset="0.55" stop-color="#FF9E6E"/><stop offset="1" stop-color="#E8677E"/>
@@ -368,9 +392,9 @@
             <div class="veil"></div>
             <div class="badge"><b>6N</b><span>Nights</span></div>
             <div class="info"><h3>Ho Chi Minh City</h3><p>10 – 16 Sep · Fusion Original Saigon Centre</p></div>
-          </div>
+          </button>
 
-          <div class="dest-card" data-jump="2026-09-16" style="--glow:var(--kr-glow)">
+          <button type="button" class="dest-card" data-jump="2026-09-16" aria-label="Jump to Seoul itinerary" style="--glow:var(--kr-glow)">
             <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
               <defs><linearGradient id="skSky" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#4A3F73"/><stop offset="0.5" stop-color="#8C6FA8"/><stop offset="1" stop-color="#D8A0B0"/>
@@ -385,9 +409,9 @@
             <div class="veil"></div>
             <div class="badge"><b>10N</b><span>Nights</span></div>
             <div class="info"><h3>Seoul</h3><p>16 – 26 Sep · Hotel Cappuccino</p></div>
-          </div>
+          </button>
 
-          <div class="dest-card" data-jump="2026-09-26" style="--glow:var(--jp-glow)">
+          <button type="button" class="dest-card" data-jump="2026-09-26" aria-label="Jump to Tokyo itinerary" style="--glow:var(--jp-glow)">
             <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
               <defs><linearGradient id="tkSky" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#FBD7E4"/><stop offset="0.55" stop-color="#F6B8CE"/><stop offset="1" stop-color="#9FC3E6"/>
@@ -402,7 +426,7 @@
             <div class="veil"></div>
             <div class="badge"><b>8N</b><span>Nights</span></div>
             <div class="info"><h3>Tokyo</h3><p>26 Sep – 4 Oct · Stay not booked</p></div>
-          </div>
+          </button>
         </div>
         <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
 
@@ -415,6 +439,11 @@
 
       <!-- ITINERARY -->
       <section class="panel" data-panel="itinerary">
+        <div class="leg-legend">
+          <span><i style="background:var(--vn1)"></i>Vietnam</span>
+          <span><i style="background:var(--kr1)"></i>Korea</span>
+          <span><i style="background:var(--jp2)"></i>Japan</span>
+        </div>
         <div class="day-strip" id="dayStrip"></div>
         <div class="day-detail" id="dayDetail"></div>
       </section>
@@ -622,9 +651,10 @@
       var dt = parseD(day.d);
       var isToday = sameDay(dt, now);
       var cls = 'day-chip glass' + (day.d===selected?' selected':'') + (isToday?' is-today':'');
-      return '<div class="'+cls+'" data-d="'+day.d+'"><div class="wd">'+WD[dt.getDay()].slice(0,3)+'</div>' +
+      var label = 'Day '+(i+1)+', '+fullDate(day.d)+(isToday?' — today':'');
+      return '<button type="button" class="'+cls+'" data-d="'+day.d+'" aria-label="'+label+'" aria-pressed="'+(day.d===selected)+'"><div class="wd">'+WD[dt.getDay()].slice(0,3)+'</div>' +
         '<div class="dn">'+(i+1)+'</div>' +
-        '<div class="dot" style="background:'+dotColor(day.leg)+'"></div></div>';
+        '<div class="dot" style="background:'+dotColor(day.leg)+'"></div></button>';
     }).join('');
     Array.prototype.forEach.call(strip.querySelectorAll('.day-chip'), function(chip){
       chip.addEventListener('click', function(){ selectDay(chip.getAttribute('data-d')); });
@@ -727,10 +757,10 @@
       html += '<div class="shop-group stagger"><h3>'+group+'</h3>';
       shopping[group].forEach(function(name){
         total++;
-        html += '<div class="shop-item glass" data-name="'+esc(name)+'">' +
+        html += '<div class="shop-item glass" data-name="'+esc(name)+'" role="button" tabindex="0" aria-pressed="false">' +
           '<div class="shop-check">'+iconFor('check')+'</div>' +
           '<div class="shop-name">'+name+'</div>' +
-          '<a class="shop-map" href="'+mapsUrl(name+', Ho Chi Minh City')+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+iconFor('pin')+'</a>' +
+          '<a class="shop-map" href="'+mapsUrl(name+', Ho Chi Minh City')+'" target="_blank" rel="noopener" aria-label="Open '+esc(name)+' in Maps" onclick="event.stopPropagation()">'+iconFor('pin')+'</a>' +
         '</div>';
       });
       html += '</div>';
@@ -741,6 +771,7 @@
     Array.prototype.forEach.call(wrap.querySelectorAll('.shop-item'), function(item){
       item.addEventListener('click', function(){
         item.classList.toggle('done');
+        item.setAttribute('aria-pressed', item.classList.contains('done') ? 'true' : 'false');
         var check = item.querySelector('.shop-check');
         if(item.classList.contains('done')){
           check.classList.remove('pop'); void check.offsetWidth; check.classList.add('pop');
@@ -749,6 +780,10 @@
         var done = wrap.querySelectorAll('.shop-item.done').length;
         document.getElementById('shopCount').textContent = done+'/'+total;
         document.getElementById('shopProgress').style.width = (done/total*100)+'%';
+      });
+      item.addEventListener('keydown', function(e){
+        if(e.target !== item) return; // let the nested map link handle its own keys
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); item.click(); }
       });
     });
   }
@@ -783,8 +818,8 @@
     box.classList.add('show');
     if(!matches.length){ box.innerHTML = '<div class="sr-empty glass">No matches for "'+esc(q)+'"</div>'; return; }
     box.innerHTML = matches.map(function(m,i){
-      return '<div class="sr-item glass" data-idx="'+i+'"><span class="sr-tag">'+m.type+'</span>' +
-        '<div class="sr-body"><div class="sr-title">'+esc(m.label)+'</div><div class="sr-sub">'+esc(m.sub)+'</div></div></div>';
+      return '<button type="button" class="sr-item glass" data-idx="'+i+'"><span class="sr-tag">'+m.type+'</span>' +
+        '<div class="sr-body"><div class="sr-title">'+esc(m.label)+'</div><div class="sr-sub">'+esc(m.sub)+'</div></div></button>';
     }).join('');
     Array.prototype.forEach.call(box.querySelectorAll('.sr-item'), function(row,i){
       row.addEventListener('click', function(){
