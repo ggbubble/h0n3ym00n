@@ -292,9 +292,17 @@
   .day-chip.selected .wd, .day-chip.selected .dn{ color:var(--bg2); }
   .day-chip.is-today:not(.selected){ border:1.5px dashed var(--gold); }
 
-  .leg-legend{ display:flex; gap:14px; padding:10px 2px 0; }
-  .leg-legend span{ display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:var(--ink-soft); }
-  .leg-legend i{ width:7px; height:7px; border-radius:50%; display:block; }
+  .leg-legend{ display:flex; gap:6px; padding:6px 0 0; }
+  .leg-legend button{
+    display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:var(--ink-soft);
+    font-family:inherit; background:none; border:none; appearance:none; -webkit-appearance:none;
+    padding:8px 10px; min-height:32px; border-radius:12px; cursor:pointer; touch-action:manipulation;
+    transition:background .2s var(--ease-out), color .2s ease, transform .15s var(--ease-spring);
+  }
+  .leg-legend button:hover{ background:var(--glass-strong); color:var(--ink); }
+  .leg-legend button:active{ transform:scale(0.94); }
+  .leg-legend button:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+  .leg-legend i{ width:7px; height:7px; border-radius:50%; display:block; flex-shrink:0; }
 
   .day-head{ display:flex; align-items:baseline; justify-content:space-between; margin:10px 2px 14px; }
   .day-head h2{ font-family:var(--font-display); font-size:19px; font-weight:800; }
@@ -438,9 +446,9 @@
       <!-- ITINERARY -->
       <section class="panel" data-panel="itinerary">
         <div class="leg-legend">
-          <span><i style="background:var(--vn1)"></i>Vietnam</span>
-          <span><i style="background:var(--kr1)"></i>Korea</span>
-          <span><i style="background:var(--jp2)"></i>Japan</span>
+          <button type="button" data-leg="vn"><i style="background:var(--vn1)"></i>Vietnam</button>
+          <button type="button" data-leg="kr"><i style="background:var(--kr1)"></i>Korea</button>
+          <button type="button" data-leg="jp"><i style="background:var(--jp2)"></i>Japan</button>
         </div>
         <div class="day-strip" id="dayStrip"></div>
         <div class="day-detail" id="dayDetail"></div>
@@ -870,9 +878,20 @@
     t.addEventListener('click', function(){ setTab(t.getAttribute('data-tab')); });
   });
 
+  // ---------- leg legend ----------
+  function initLegLegend(){
+    Array.prototype.forEach.call(document.querySelectorAll('.leg-legend button'), function(btn){
+      btn.addEventListener('click', function(){
+        var leg = legs.find(function(l){ return l.id === btn.getAttribute('data-leg'); });
+        if(leg){ selectDay(leg.start); }
+      });
+    });
+  }
+
   // ---------- init ----------
   renderStatus();
   initCarousel();
+  initLegLegend();
   selected = defaultDay();
   renderStrip();
   renderDetail();
