@@ -177,9 +177,10 @@
 
   /* ---- Home ---- */
   .hero{ padding:8px 2px 4px; }
-  .hero h1{ font-family:var(--font-display); font-weight:800; font-size:30px; letter-spacing:-0.01em; line-height:1.08;
+  .hero h1{ display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:30px; letter-spacing:-0.01em; line-height:1.08;
     background:linear-gradient(100deg, var(--ink) 40%, var(--kr1) 65%, var(--jp2) 100%);
     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero-plane{ width:23px; height:23px; flex-shrink:0; color:var(--jp2); -webkit-text-fill-color:initial; }
   .hero .sub{ font-size:12.5px; color:var(--ink-soft); font-weight:600; margin-top:6px; }
 
   .search{ display:flex; align-items:center; gap:10px; margin-top:16px; border-radius:18px; padding:13px 16px; }
@@ -218,7 +219,39 @@
   .dest-card:nth-child(1){ animation-delay:.05s; }
   .dest-card:nth-child(2){ animation-delay:.14s; }
   .dest-card:nth-child(3){ animation-delay:.23s; }
-  .dest-card svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .dest-card::after{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:0.15; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+  .dest-card.mesh-vn{
+    background:
+      radial-gradient(90% 70% at 18% 12%, rgba(255,225,176,0.95), transparent 55%),
+      radial-gradient(80% 75% at 88% 18%, rgba(255,158,110,0.9), transparent 55%),
+      radial-gradient(100% 85% at 62% 96%, rgba(232,103,126,0.92), transparent 60%),
+      radial-gradient(120% 95% at 6% 100%, rgba(46,124,116,0.9), transparent 60%),
+      linear-gradient(160deg, #FFD9A0, #E8677E 62%, #2E7C74 100%);
+    background-size:165% 165%; animation:meshDrift 17s ease-in-out infinite alternate;
+  }
+  .dest-card.mesh-kr{
+    background:
+      radial-gradient(85% 65% at 82% 10%, rgba(246,233,201,0.55), transparent 55%),
+      radial-gradient(90% 80% at 16% 28%, rgba(140,111,168,0.95), transparent 55%),
+      radial-gradient(105% 90% at 78% 96%, rgba(216,160,176,0.88), transparent 60%),
+      radial-gradient(120% 95% at 8% 100%, rgba(42,33,64,0.92), transparent 60%),
+      linear-gradient(160deg, #4A3F73, #8C6FA8 58%, #D8A0B0 100%);
+    background-size:165% 165%; animation:meshDrift 20s ease-in-out infinite alternate-reverse;
+  }
+  .dest-card.mesh-jp{
+    background:
+      radial-gradient(85% 65% at 22% 12%, rgba(251,215,228,0.95), transparent 55%),
+      radial-gradient(85% 78% at 88% 25%, rgba(246,184,206,0.88), transparent 55%),
+      radial-gradient(105% 90% at 58% 96%, rgba(159,195,230,0.92), transparent 60%),
+      radial-gradient(120% 95% at 2% 100%, rgba(126,143,190,0.85), transparent 60%),
+      linear-gradient(160deg, #FBD7E4, #F6B8CE 58%, #9FC3E6 100%);
+    background-size:165% 165%; animation:meshDrift 18s ease-in-out infinite alternate;
+  }
+  @keyframes meshDrift{ from{ background-position:0% 0%; } to{ background-position:100% 55%; } }
+  .dest-card .dest-path{ position:absolute; inset:0; width:100%; height:100%; opacity:0.85; }
   .dest-card .veil{ position:absolute; inset:0; background:linear-gradient(to top, rgba(15,10,25,0.72) 0%, rgba(15,10,25,0.15) 45%, transparent 65%); }
   .dest-card .badge{
     position:absolute; top:12px; right:12px; width:44px; height:44px; border-radius:50%;
@@ -353,7 +386,7 @@
       <!-- HOME -->
       <section class="panel" data-panel="home">
         <div class="hero">
-          <h1>h0n3ym00n ✈️</h1>
+          <h1>h0n3ym00n <svg class="hero-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13.5 21 6l-7.5 18-2-8-8-2.5Z"/></svg></h1>
           <div class="sub">VN · KR · JP — 10 Sep – 4 Oct 2026</div>
         </div>
 
@@ -370,59 +403,22 @@
 
         <div class="section-label">The Route</div>
         <div class="dest-scroll" id="destScroll">
-          <button type="button" class="dest-card" data-jump="2026-09-10" aria-label="Jump to Ho Chi Minh City itinerary" style="--glow:var(--vn-glow)">
-            <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
-              <defs><linearGradient id="sgSky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#FFD9A0"/><stop offset="0.55" stop-color="#FF9E6E"/><stop offset="1" stop-color="#E8677E"/>
-              </linearGradient><linearGradient id="sgSea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#2E7C74"/><stop offset="1" stop-color="#1F5751"/>
-              </linearGradient></defs>
-              <rect width="400" height="260" fill="url(#sgSky)"/>
-              <circle cx="115" cy="145" r="72" fill="#FFF3D6" opacity="0.35"/>
-              <rect y="205" width="400" height="55" fill="url(#sgSea)"/>
-              <g fill="#123B39" opacity="0.9">
-                <rect x="8" y="165" width="18" height="45"/><rect x="32" y="150" width="14" height="60"/><rect x="50" y="175" width="20" height="35"/>
-                <rect x="302" y="160" width="16" height="50"/><rect x="322" y="180" width="22" height="30"/><rect x="352" y="150" width="14" height="60"/><rect x="370" y="170" width="20" height="40"/>
-              </g>
-              <g fill="#0F2D2B"><path d="M230 210 L238 90 Q242 78 246 90 L254 210 Z"/><ellipse cx="242" cy="86" rx="18" ry="6"/></g>
-              <g stroke="#123B39" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.85">
-                <path d="M20 260 L28 190"/><path d="M28 190 Q10 175 -2 182"/><path d="M28 190 Q16 165 4 160"/><path d="M28 190 Q46 168 60 165"/><path d="M28 190 Q50 182 66 190"/>
-              </g>
-            </svg>
+          <button type="button" class="dest-card mesh-vn" data-jump="2026-09-10" aria-label="Jump to Ho Chi Minh City itinerary" style="--glow:var(--vn-glow)">
+            <svg class="dest-path" viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true"><path d="M24 224 C120 140,220 70,372 96" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="1 11" stroke-linecap="round"/><circle cx="372" cy="96" r="4.5" fill="#fff"/></svg>
             <div class="veil"></div>
             <div class="badge"><b>6N</b><span>Nights</span></div>
             <div class="info"><h3>Ho Chi Minh City</h3><p>10 – 16 Sep · Fusion Original Saigon Centre</p></div>
           </button>
 
-          <button type="button" class="dest-card" data-jump="2026-09-16" aria-label="Jump to Seoul itinerary" style="--glow:var(--kr-glow)">
-            <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
-              <defs><linearGradient id="skSky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#4A3F73"/><stop offset="0.5" stop-color="#8C6FA8"/><stop offset="1" stop-color="#D8A0B0"/>
-              </linearGradient></defs>
-              <rect width="400" height="260" fill="url(#skSky)"/>
-              <circle cx="332" cy="52" r="20" fill="#F6E9C9" opacity="0.9"/><circle cx="341" cy="47" r="18" fill="#5E4E82" opacity="0.95"/>
-              <g fill="#F6E9C9" opacity="0.7"><circle cx="60" cy="40" r="1.6"/><circle cx="90" cy="70" r="1.6"/><circle cx="150" cy="30" r="1.6"/><circle cx="200" cy="55" r="1.6"/><circle cx="250" cy="35" r="1.6"/></g>
-              <path d="M0 200 Q120 128 240 195 T400 190 V260 H0 Z" fill="#2A2140" opacity="0.92"/>
-              <g fill="#1B1530"><rect x="192" y="120" width="6" height="70"/><path d="M186 122 L204 122 L195 95 Z"/><circle cx="195" cy="118" r="9"/></g>
-              <g fill="#221A38" opacity="0.95"><rect x="18" y="205" width="16" height="35"/><rect x="38" y="190" width="14" height="50"/><rect x="300" y="200" width="18" height="40"/><rect x="325" y="185" width="14" height="55"/><rect x="345" y="205" width="20" height="35"/></g>
-            </svg>
+          <button type="button" class="dest-card mesh-kr" data-jump="2026-09-16" aria-label="Jump to Seoul itinerary" style="--glow:var(--kr-glow)">
+            <svg class="dest-path" viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true"><path d="M24 224 C120 140,220 70,372 96" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="1 11" stroke-linecap="round"/><circle cx="372" cy="96" r="4.5" fill="#fff"/></svg>
             <div class="veil"></div>
             <div class="badge"><b>10N</b><span>Nights</span></div>
             <div class="info"><h3>Seoul</h3><p>16 – 26 Sep · Hotel Cappuccino</p></div>
           </button>
 
-          <button type="button" class="dest-card" data-jump="2026-09-26" aria-label="Jump to Tokyo itinerary" style="--glow:var(--jp-glow)">
-            <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice">
-              <defs><linearGradient id="tkSky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#FBD7E4"/><stop offset="0.55" stop-color="#F6B8CE"/><stop offset="1" stop-color="#9FC3E6"/>
-              </linearGradient></defs>
-              <rect width="400" height="260" fill="url(#tkSky)"/>
-              <path d="M120 210 L200 90 L280 210 Z" fill="#7E8FBE" opacity="0.85"/>
-              <path d="M175 130 L200 90 L225 130 Q200 118 175 130 Z" fill="#FBEFF4"/>
-              <g stroke="#C23B4C" stroke-width="3" fill="none"><path d="M330 210 L345 100 L360 210"/><path d="M336 160 L354 160"/><path d="M340 130 L350 130"/><path d="M330 210 L360 210"/></g>
-              <g fill="#FF8FB4" opacity="0.8"><circle cx="60" cy="60" r="4"/><circle cx="80" cy="80" r="3"/><circle cx="45" cy="90" r="3"/><circle cx="340" cy="60" r="4"/><circle cx="365" cy="85" r="3"/></g>
-              <rect x="0" y="215" width="400" height="45" fill="#5B6FA0" opacity="0.7"/>
-            </svg>
+          <button type="button" class="dest-card mesh-jp" data-jump="2026-09-26" aria-label="Jump to Tokyo itinerary" style="--glow:var(--jp-glow)">
+            <svg class="dest-path" viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true"><path d="M24 224 C120 140,220 70,372 96" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="1 11" stroke-linecap="round"/><circle cx="372" cy="96" r="4.5" fill="#fff"/></svg>
             <div class="veil"></div>
             <div class="badge"><b>8N</b><span>Nights</span></div>
             <div class="info"><h3>Tokyo</h3><p>26 Sep – 4 Oct · Stay not booked</p></div>
