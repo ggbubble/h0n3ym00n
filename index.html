@@ -278,6 +278,7 @@
 
   /* ---- Itinerary ---- */
   .day-strip{ display:flex; gap:8px; overflow-x:auto; margin:0 -20px; padding:8px 20px 12px; scroll-snap-type:x proximity; scroll-padding-left:20px; scrollbar-width:none; }
+  .day-strip[hidden]{ display:none; }
   .day-strip::-webkit-scrollbar{ display:none; }
   .day-chip{
     scroll-snap-align:center; flex-shrink:0; width:48px; padding:9px 0 10px; border-radius:16px;
@@ -291,6 +292,40 @@
   .day-chip.selected{ background:var(--ink); box-shadow:0 6px 16px -6px rgba(60,40,90,0.4); }
   .day-chip.selected .wd, .day-chip.selected .dn{ color:var(--bg2); }
   .day-chip.is-today:not(.selected){ border:1.5px dashed var(--gold); }
+
+  .itin-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .view-toggle{ display:flex; gap:2px; padding:3px; border-radius:14px; flex-shrink:0; margin-top:6px; }
+  .vt-btn{ display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:11px; background:none; border:none; color:var(--ink-soft); cursor:pointer; touch-action:manipulation; appearance:none; -webkit-appearance:none; transition:background .2s var(--ease-out), color .2s ease; }
+  .vt-btn svg{ width:16px; height:16px; }
+  .vt-btn.active{ background:var(--glass-strong); color:var(--ink); }
+  .vt-btn:active{ transform:scale(0.9); }
+  .vt-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+  .cal-view{ margin-top:6px; }
+  .cal-header{ display:flex; align-items:center; justify-content:space-between; padding:4px 2px 10px; }
+  .cal-title{ font-family:var(--font-display); font-size:15px; font-weight:800; }
+  .cal-nav{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--glass-strong); border:none; color:var(--ink); cursor:pointer; touch-action:manipulation; appearance:none; -webkit-appearance:none; }
+  .cal-nav svg{ width:15px; height:15px; }
+  .cal-nav:disabled{ opacity:0.3; cursor:default; }
+  .cal-nav:active:not(:disabled){ transform:scale(0.9); }
+  .cal-nav:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+  .cal-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:6px; }
+  .cal-weekdays span{ text-align:center; font-size:9px; font-weight:800; color:var(--ink-soft); text-transform:uppercase; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .cal-cell{
+    aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    border-radius:12px; font-family:var(--font-mono); font-size:12.5px; font-weight:700; color:var(--ink);
+    background:none; border:none; appearance:none; -webkit-appearance:none; cursor:pointer; touch-action:manipulation;
+    transition:background .2s var(--ease-out), color .2s ease, transform .15s var(--ease-spring);
+  }
+  .cal-cell.empty{ visibility:hidden; pointer-events:none; }
+  .cal-cell.outside{ color:var(--ink-soft); opacity:0.32; cursor:default; }
+  .cal-cell:not(.empty):not(.outside):hover{ background:var(--glass-strong); }
+  .cal-cell:not(.empty):not(.outside):active{ transform:scale(0.9); }
+  .cal-cell.selected{ background:var(--ink); color:var(--bg2); }
+  .cal-cell.is-today{ border:1.5px dashed var(--gold); }
+  .cal-cell:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+  .cal-cell .dot{ width:5px; height:5px; border-radius:50%; }
 
   .leg-legend{ display:flex; gap:6px; padding:6px 0 0; }
   .leg-legend button{
@@ -445,12 +480,35 @@
 
       <!-- ITINERARY -->
       <section class="panel" data-panel="itinerary">
-        <div class="leg-legend">
-          <button type="button" data-leg="vn"><i style="background:var(--vn1)"></i>Vietnam</button>
-          <button type="button" data-leg="kr"><i style="background:var(--kr1)"></i>Korea</button>
-          <button type="button" data-leg="jp"><i style="background:var(--jp2)"></i>Japan</button>
+        <div class="itin-top">
+          <div class="leg-legend">
+            <button type="button" data-leg="vn"><i style="background:var(--vn1)"></i>Vietnam</button>
+            <button type="button" data-leg="kr"><i style="background:var(--kr1)"></i>Korea</button>
+            <button type="button" data-leg="jp"><i style="background:var(--jp2)"></i>Japan</button>
+          </div>
+          <div class="view-toggle glass">
+            <button type="button" class="vt-btn active" data-view="strip" aria-label="Strip view" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <button type="button" class="vt-btn" data-view="calendar" aria-label="Calendar view" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M3.5 9.5h17"/><path d="M8 2.5v4M16 2.5v4"/></svg>
+            </button>
+          </div>
         </div>
         <div class="day-strip" id="dayStrip"></div>
+        <div class="cal-view" id="calView" hidden>
+          <div class="cal-header">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
+            <div class="cal-title" id="calTitle">—</div>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Next month">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+          <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
         <div class="day-detail" id="dayDetail"></div>
       </section>
 
@@ -579,6 +637,8 @@
 
   var WD = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   var MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MO_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function pad2(n){ return n<10 ? '0'+n : ''+n; }
   function parseD(s){ var p=s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
   function fullDate(s){ var dt=parseD(s); return WD[dt.getDay()].slice(0,3)+', '+dt.getDate()+' '+MO[dt.getMonth()]+' '+dt.getFullYear(); }
   function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
@@ -666,6 +726,8 @@
 
   // ---------- itinerary ----------
   var selected = null;
+  var itinView = 'strip';
+  var calMonthDate = null; // Date set to the 1st of the currently-shown calendar month
 
   function defaultDay(){
     var now = new Date();
@@ -765,6 +827,69 @@
     renderDetail();
     var chip = document.querySelector('.day-chip[data-d="'+d+'"]');
     if(chip){ chip.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }
+    var dt = parseD(d);
+    calMonthDate = new Date(dt.getFullYear(), dt.getMonth(), 1);
+    if(itinView==='calendar'){ renderCalendar(); }
+  }
+
+  // ---------- calendar view ----------
+  function calBounds(){
+    return {
+      min: (function(f){ return new Date(f.getFullYear(), f.getMonth(), 1); })(parseD(days[0].d)),
+      max: (function(l){ return new Date(l.getFullYear(), l.getMonth(), 1); })(parseD(days[days.length-1].d))
+    };
+  }
+
+  function renderCalendar(){
+    var y = calMonthDate.getFullYear(), m = calMonthDate.getMonth();
+    document.getElementById('calTitle').textContent = MO_FULL[m] + ' ' + y;
+    var firstDow = new Date(y, m, 1).getDay();
+    var daysInMonth = new Date(y, m+1, 0).getDate();
+    var now = new Date(); now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var html = '';
+    for(var i=0;i<firstDow;i++){ html += '<div class="cal-cell empty"></div>'; }
+    for(var d=1; d<=daysInMonth; d++){
+      var iso = y+'-'+pad2(m+1)+'-'+pad2(d);
+      var day = days.find(function(x){ return x.d===iso; });
+      if(!day){ html += '<div class="cal-cell outside">'+d+'</div>'; continue; }
+      var isToday = sameDay(new Date(y,m,d), now);
+      var cls = 'cal-cell' + (iso===selected?' selected':'') + (isToday?' is-today':'');
+      html += '<button type="button" class="'+cls+'" data-d="'+iso+'" aria-label="'+fullDate(iso)+(isToday?' — today':'')+'">'+d+
+        '<span class="dot" style="background:'+dotColor(day.leg)+'"></span></button>';
+    }
+    document.getElementById('calGrid').innerHTML = html;
+    Array.prototype.forEach.call(document.querySelectorAll('.cal-grid button.cal-cell'), function(cell){
+      cell.addEventListener('click', function(){ selectDay(cell.getAttribute('data-d')); });
+    });
+    var bounds = calBounds();
+    document.getElementById('calPrev').disabled = (y===bounds.min.getFullYear() && m===bounds.min.getMonth());
+    document.getElementById('calNext').disabled = (y===bounds.max.getFullYear() && m===bounds.max.getMonth());
+  }
+
+  function setItinView(mode){
+    itinView = mode;
+    Array.prototype.forEach.call(document.querySelectorAll('.vt-btn'), function(b){
+      var on = b.getAttribute('data-view')===mode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on);
+    });
+    document.getElementById('dayStrip').hidden = mode!=='strip';
+    document.getElementById('calView').hidden = mode!=='calendar';
+    if(mode==='calendar'){ renderCalendar(); }
+  }
+
+  function initCalendar(){
+    Array.prototype.forEach.call(document.querySelectorAll('.vt-btn'), function(btn){
+      btn.addEventListener('click', function(){ setItinView(btn.getAttribute('data-view')); });
+    });
+    document.getElementById('calPrev').addEventListener('click', function(){
+      calMonthDate = new Date(calMonthDate.getFullYear(), calMonthDate.getMonth()-1, 1);
+      renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', function(){
+      calMonthDate = new Date(calMonthDate.getFullYear(), calMonthDate.getMonth()+1, 1);
+      renderCalendar();
+    });
   }
 
   // ---------- shopping ----------
@@ -893,7 +1018,9 @@
   renderStatus();
   initCarousel();
   initLegLegend();
+  initCalendar();
   selected = defaultDay();
+  calMonthDate = new Date(parseD(selected).getFullYear(), parseD(selected).getMonth(), 1);
   renderStrip();
   renderDetail();
   renderShopping();
