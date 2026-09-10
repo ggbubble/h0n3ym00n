@@ -487,16 +487,16 @@
             <button type="button" data-leg="jp"><i style="background:var(--jp2)"></i>Japan</button>
           </div>
           <div class="view-toggle glass">
-            <button type="button" class="vt-btn active" data-view="strip" aria-label="Strip view" aria-pressed="true">
+            <button type="button" class="vt-btn" data-view="strip" aria-label="Strip view" aria-pressed="false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
             </button>
-            <button type="button" class="vt-btn" data-view="calendar" aria-label="Calendar view" aria-pressed="false">
+            <button type="button" class="vt-btn active" data-view="calendar" aria-label="Calendar view" aria-pressed="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M3.5 9.5h17"/><path d="M8 2.5v4M16 2.5v4"/></svg>
             </button>
           </div>
         </div>
-        <div class="day-strip" id="dayStrip"></div>
-        <div class="cal-view" id="calView" hidden>
+        <div class="day-strip" id="dayStrip" hidden></div>
+        <div class="cal-view" id="calView">
           <div class="cal-header">
             <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
@@ -557,10 +557,10 @@
 
   var days = [
     {d:'2026-09-10', leg:'vn', city:'Ho Chi Minh City', flights:[{code:'JQ61',from:'SYD',to:'SGN',dep:'3:10 PM',arr:'9:00 PM'}], checkin:legs[0].hotel, checkout:null, events:[]},
-    {d:'2026-09-11', leg:'vn', city:'Ho Chi Minh City', flights:[], checkin:null, checkout:null, events:[
+    {d:'2026-09-11', leg:'vn', city:'Ho Chi Minh City', flights:[], checkin:null, checkout:null, events:[]},
+    {d:'2026-09-12', leg:'vn', city:'Ho Chi Minh City', flights:[], checkin:null, checkout:null, events:[
       {time:'11:00 AM', title:'Lash appointment', place:'6/18 Cách Mạng Tháng Tám, Bến Thành Ward, District 1, Ho Chi Minh City', phone:'+84968674669', phoneDisplay:'(+84) 968 674 669', note:'Bring cash'}
     ]},
-    {d:'2026-09-12', leg:'vn', city:'Ho Chi Minh City', flights:[], checkin:null, checkout:null, events:[]},
     {d:'2026-09-13', leg:'vn', city:'Ho Chi Minh City', flights:[], checkin:null, checkout:null, events:[]},
     {d:'2026-09-14', leg:'vn', city:'Ho Chi Minh City', flights:[], checkin:null, checkout:null, events:[
       {time:null, title:'Pre-wedding photoshoot — Fairytale Wedding', place:'221/9 Lê Văn Sỹ, Nhiêu Lộc Ward, Ho Chi Minh City', phone:'+84702791420', phoneDisplay:'070 279 1420', instagram:'https://www.instagram.com/fairytalewedding.vn/'}
@@ -726,7 +726,7 @@
 
   // ---------- itinerary ----------
   var selected = null;
-  var itinView = 'strip';
+  var itinView = 'calendar';
   var calMonthDate = null; // Date set to the 1st of the currently-shown calendar month
 
   function defaultDay(){
@@ -1022,6 +1022,7 @@
   selected = defaultDay();
   calMonthDate = new Date(parseD(selected).getFullYear(), parseD(selected).getMonth(), 1);
   renderStrip();
+  renderCalendar();
   renderDetail();
   renderShopping();
   buildSearchIndex();
